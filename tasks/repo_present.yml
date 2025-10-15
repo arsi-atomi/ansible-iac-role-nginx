@@ -1,0 +1,121 @@
+---
+###############################################################################
+#
+# repo_present.yml
+#
+# @author Arsi Atomi <arsi@atomi.sh>
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+- name: "Checking if required variables are defined"
+  ansible.builtin.assert:
+    that:
+      - iac_dnf_main_package is defined
+      - iac_dnf_repo_path is defined
+      - iac_dnf_repo_name is defined
+    fail_msg: "All tests did not pass"
+
+###############################################################################
+# ENSURING REPOSITORY IS PRESENT
+###############################################################################
+
+- name: "Checking if server packages are available already"
+  ansible.builtin.shell: >
+    set -o pipefail &&
+    dnf list {{ iac_dnf_main_package }} |
+    grep {{ iac_dnf_main_package }} |
+    awk '{print $1}' |
+    awk '{split($0,a,\".\"); print a[1]}'
+  environment:
+    http_proxy: "{{ http_proxy | default(omit) }}"
+    https_proxy: "{{ https_proxy | default(omit) }}"
+    no_proxy: "{{ no_proxy | default(omit) }}"
+  register: sw_packages
+  changed_when: false
+  failed_when: false
+
+- name: "Ensuring repository is in place"
+  ansible.builtin.template:
+    src: "nginx.repo.j2"
+    dest: "{{ iac_dnf_repo_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+###############################################################################
+# ENSURING PROXY IS CONFIGURED TO REPOSITORY IF NEEDED
+###############################################################################
+
+- name: "Checking if repository file exists"
+  ansible.builtin.stat:
+    path: "{{ iac_dnf_repo_path }}"
+  register: repo_file
+
+- name: "Adding proxy settings to repo file if it exists and proxy settings are missing but proxy setting is defined"
+  ansible.builtin.command: >
+    sed -i '/^\[.*\]$/a proxy={{ http_proxy }}' {{ iac_dnf_repo_path }}
+  register: my_output
+  failed_when: false
+  changed_when: false
+  when: repo_file.stat.exists and http_proxy is defined
+
+###############################################################################
+# ENABLING REPOSITORY
+###############################################################################
+
+- name: "Setting variables"
+  ansible.builtin.set_fact:
+    iac_cli_command: "dnf config-manager --set-enabled {{ iac_dnf_repo_name }}"
+  when: ansible_distribution in ['RedHat', 'Rocky'] and ansible_distribution_major_version in ['8', '9', '10']
+
+- name: "Setting variables"
+  ansible.builtin.set_fact:
+    iac_cli_command: "dnf config-manager setopt  {{ iac_dnf_repo_name }}.enabled=1"
+  when: ansible_distribution == 'Fedora' and ansible_distribution_major_version in ['41', '42']
+
+- name: "Ensuring repositories are present"
+  ansible.builtin.command: >
+    {{ iac_cli_command }}
+  register: my_output
+  changed_when: my_output.rc == 0
+  failed_when: my_output.rc != 0
+
+- name: "Writing log"
+  ansible.builtin.include_tasks: log_write.yml
+  vars:
+    iac_log_write: "Enabled repository {{ iac_dnf_repo_name }}"
+
+###############################################################################
+# EXCLUDING FROM OTHER REPOSITORIES
+###############################################################################
+
+- name: "Setting variables"
+  ansible.builtin.set_fact:
+    iac_cli_command: "dnf config-manager setopt fedora.exclude=nginx* updates.exclude=nginx*"
+  when: ansible_distribution == 'Fedora'
+
+- name: "Setting variables"
+  ansible.builtin.set_fact:
+    iac_cli_command: "dnf -qy module disable nginx"
+  when: ansible_distribution in ['RedHat','Rocky'] and ansible_distribution_major_version in ['8','9']
+
+- name: "Setting variables"
+  ansible.builtin.set_fact:
+    iac_cli_command: "dnf config-manager --setopt='appstream.exclude=nginx*' --save"
+  when: ansible_distribution in ['RedHat','Rocky'] and ansible_distribution_major_version == '10'
+
+- name: "Ensuring other packages are excluded"
+  ansible.builtin.command: >
+    {{ iac_cli_command }}
+  register: my_output
+  changed_when: my_output.rc == 0
+  failed_when: my_output.rc != 0
+
+- name: "Writing log"
+  ansible.builtin.include_tasks: log_write.yml
+  vars:
+    iac_log_write: "Enabled repository {{ iac_dnf_repo_name }}"

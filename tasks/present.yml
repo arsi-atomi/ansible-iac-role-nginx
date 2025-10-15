@@ -1,0 +1,33 @@
+---
+###############################################################################
+#
+# present.yml
+#
+# @author Arsi Atomi
+#
+###############################################################################
+
+###############################################################################
+# SETTING VARIABLES
+###############################################################################
+
+- name: "Ensuring dnf plugins core is installed"
+  ansible.builtin.include_tasks: package_present.yml
+  vars:
+    iac_package: "dnf-plugins-core"
+
+###############################################################################
+# ENSURING REPOSITORIES ARE PRESENT
+###############################################################################
+
+- name: "Ensuring Nginx repositories are present"
+  ansible.builtin.include_tasks: repo_present.yml
+
+###############################################################################
+# INSTALLING LANGUAGEPACKS IF NEEDED
+###############################################################################
+
+- name: "Ensuring nginx is installed"
+  ansible.builtin.include_tasks: package_present.yml
+  vars:
+    iac_package: "nginx"
