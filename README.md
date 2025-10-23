@@ -30,3 +30,34 @@ Requirements
 
 - Other components
   - Ansible 2.16 or higher
+
+Usage
+=====
+
+iac_blueprint inventory structure
+---------------------------------
+
+Top-level structure:
+
+```yaml
+iac_blueprint:
+  nginx:
+    sites:
+      - name: <site_name>                                 # site specific name
+        ssl_certificate_type: <certificate_type>          # none|selfsigned (default: none)
+        autoconfigure: <autoconfigure_type>               # none|website|proxy (default: website)
+        redirect_to: <url>                                # if autoconfigure is proxy this
+        servers:                                          # direct server {} override configuration
+          - key: <value>
+```
+
+A minimal working iac_blueprint that installs Nginx with one virtual host:
+
+```yaml
+iac_blueprint:
+  nginx:
+    sites:
+      - name: example.org                                 # site specific name
+        ssl_certificate_type: selfsigned                  # none|selfsigned (default: none)
+        autoconfigure: website                            # none|website|proxy (default: website)
+```
