@@ -1,4 +1,3 @@
-
 ANSIBLE-IAC-ROLE-NGINX
 ======================
 **COPYRIGHT** 2025 ^(ida|arsi)$ collective  
@@ -15,11 +14,14 @@ Supported Nginx version:
 - nginx-stable from Nginx repository
 
 These operations are supported:
-- Installing Nginx
-- Creating site configuration
-- Enabling site configuration
-- Starting Nginx service
-- Stopping Nginx service
+
+Operation                       | State               |
+--------------------------------|---------------------|
+Installing Nginx                | present             |
+Creating site configuration     | site_present        |
+Enabling site configuration     | site_enabled        |
+Starting Nginx service          | started             |
+Stopping Nginx service          | stopped             |
 
 Requirements
 ------------
