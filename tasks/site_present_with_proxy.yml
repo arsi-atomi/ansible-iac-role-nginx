@@ -1,7 +1,7 @@
 ---
 ###############################################################################
 #
-# site_present_with_autoconfiguration.yml
+# site_present_with_proxy.yml
 #
 # @author Arsi Atomi
 #
@@ -67,7 +67,7 @@
 
 - name: "Ensuring proxy configuration"
   ansible.builtin.template:
-    src: "site_website_443.j2"
+    src: "site_proxy_443.j2"
     dest: "{{ nginx_etc_directory }}/sites-available/{{ nginx_site.name }}_443"
     owner: root
     group: root

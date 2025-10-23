@@ -1,0 +1,5 @@
+server {
+  listen 80;
+  server_name {{ nginx_site.name }};
+  return 301 https://{{ nginx_site.name }}$request_uri;
+}

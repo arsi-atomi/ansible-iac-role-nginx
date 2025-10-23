@@ -30,6 +30,10 @@
   ansible.builtin.include_tasks: site_present_with_website.yml
   when: nginx_autoconfigure == 'website'
 
+- name: "Configuring with autoconfiguration if it is enabled"
+  ansible.builtin.include_tasks: site_present_with_proxy.yml
+  when: nginx_autoconfigure == 'proxy'
+
 ###############################################################################
 # LOOPING THROUGH VIRTUAL HOSTS TO BE ADDED IF SERVERS EXIST
 ###############################################################################
