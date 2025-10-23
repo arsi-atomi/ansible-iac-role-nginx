@@ -25,6 +25,7 @@ Requirements
 ------------
 
 - Operating system
+  - Rocky Linux 10
   - Rocky Linux 9
   - Rocky Linux 8
 
