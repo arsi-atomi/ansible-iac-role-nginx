@@ -19,6 +19,7 @@ These operations are supported:
 - Creating site configuration
 - Enabling site configuration
 - Starting Nginx service
+- Stopping Nginx service
 
 Requirements
 ------------
