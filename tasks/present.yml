@@ -29,7 +29,7 @@
   ansible.builtin.include_tasks: repo_present.yml
 
 ###############################################################################
-# INSTALLING LANGUAGEPACKS IF NEEDED
+# ENSURING NGINX PACKAGE IS PRESENT
 ###############################################################################
 
 - name: "Ensuring nginx is installed"

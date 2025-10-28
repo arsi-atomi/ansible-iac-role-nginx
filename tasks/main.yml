@@ -67,6 +67,10 @@
   ansible.builtin.include_tasks: present.yml
   when: state == 'present'
 
+- name: "STATE: Ensure Nginx installation is absent"
+  ansible.builtin.include_tasks: absent.yml
+  when: state == 'absent'
+
 - name: "STATE: Ensure Nginx sites are present"
   ansible.builtin.include_tasks: loop_sites.yml
   when: state == 'site_present'
