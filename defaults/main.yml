@@ -22,8 +22,16 @@ iac_supported_os:
 # DNF related configurations
 ###############################################################################
 
+# main package name
 iac_dnf_main_package: "nginx"
+
+# if this is true it skips creating repo if main package is already available
+iac_dnf_skip_repo_if_package_available: true
+
+# repository name
 iac_dnf_repo_name: "nginx-stable"
+
+# repository filepath
 iac_dnf_repo_path: "/etc/yum.repos.d/nginx.repo"
 
 ###############################################################################
