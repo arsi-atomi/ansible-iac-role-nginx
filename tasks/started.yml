@@ -13,9 +13,9 @@
 
 - name: "Executing systemd daemon-reload"
   ansible.builtin.systemd:
-    daemon_reload: true
     name: nginx
     state: restarted
+    daemon_reload: true
 
 - name: "Writing log"
   ansible.builtin.include_tasks: log_write.yml
