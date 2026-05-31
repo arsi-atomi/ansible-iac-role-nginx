@@ -103,6 +103,18 @@
     nginx_state: "{{ state }}"
   when: state == 'site_disabled'
 
+- name: "STATE: Ensure Nginx site locations are present"
+  ansible.builtin.include_tasks: loop_sites.yml
+  vars:
+    nginx_state: "site_present"
+  when: state == 'location_present'
+
+- name: "STATE: Ensure Nginx site locations are absent"
+  ansible.builtin.include_tasks: loop_sites.yml
+  vars:
+    nginx_state: "site_present"
+  when: state == 'location_absent'
+
 - name: "STATE: Ensure Nginx is started"
   ansible.builtin.include_tasks: started.yml
   when: state == 'started'

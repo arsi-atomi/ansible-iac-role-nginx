@@ -22,6 +22,8 @@ Operation                       | State               |
 --------------------------------|---------------------|
 Installing Nginx                | present             |
 Creating site configuration     | site_present        |
+Creating location configuration | location_present    |
+Removing location configuration | location_absent     |
 Enabling site configuration     | site_enabled        |
 Starting Nginx service          | started             |
 Stopping Nginx service          | stopped             |
