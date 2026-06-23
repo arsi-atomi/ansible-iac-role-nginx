@@ -74,7 +74,10 @@
     mode: "0755"
 
 - name: "Ensuring correct SELinux context"
-  ansible.builtin.command: restorecon -Rv {{ nginx_www_directory }}
+  ansible.builtin.command:
+    cmd: "restorecon -Rv {{ nginx_www_directory }}"
+  changed_when: false
+  failed_when: false
   when: ansible_facts["virtualization_type"] not in ["docker", "podman", "lxc"]
 
 ###############################################################################
